@@ -1001,108 +1001,35 @@
             function searchByNumber(searchValue, type) {
                 const apiUrl = `https://fam-official.serv00.net/api/database.php?number=${searchValue}`;
                 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('NETWORK RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
+                fetchWithCorsProxy(apiUrl)
                     .then(data => {
                         console.log('API Response:', data);
                         handleApiResponse(data, type, searchValue);
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
-                        // Try with proxy if direct fetch fails
-                        tryProxyFetch(searchValue, type);
-                    });
-            }
-            
-            function tryProxyFetch(searchValue, type) {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const apiUrl = `https://fam-official.serv00.net/api/database.php?number=${searchValue}`;
-                
-                const url = proxyUrl + encodeURIComponent(apiUrl);
-                
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('PROXY RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Proxy API Response:', data);
-                        handleApiResponse(data, type, searchValue);
-                    })
-                    .catch(error => {
-                        console.error('Proxy fetch failed:', error);
                         showError('DATABASE CONNECTION FAILED. TRY AGAIN.');
                     });
             }
             
-            function handleApiResponse(data, type, searchValue) {
-                // Check if API returned success and has data
-                if (data && data.success && data.data && data.data.length > 0) {
-                    if (type === 'cnic') {
-                        // For CNIC search, show all numbers associated with this CNIC
-                        displayMultipleResults(data.data, searchValue);
-                    } else {
-                        // For phone search, show single result
-                        displaySingleResult(data.data[0]);
-                    }
-                } else {
-                    showNoData();
-                }
-            }
-            
             function searchAadhaarFamilyTree(aadhaarNumber) {
-                // For demo purposes, we'll show sample data
-                // In a real implementation, you would call the actual API
-                const sampleData = {
-                    homeStateCode: "20",
-                    homeStateName: "JHARKHAND",
-                    homeDistName: "RAMGARH",
-                    rcId: "202007265579",
-                    address: "VILLAGE, POST OFFICE, DISTRICT",
-                    memberDetailsList: [
-                        {
-                            memberName: "Shanti Devi",
-                            uid: "Yes",
-                            releationship_name: "SELF"
-                        },
-                        {
-                            memberName: "Pradeep Kumar Mishra",
-                            uid: "Yes", 
-                            releationship_name: "SON"
-                        },
-                        {
-                            memberName: "Raju Kumar Mishra",
-                            uid: "Yes",
-                            releationship_name: "SON"
-                        },
-                        {
-                            memberName: "Ruby Mishra", 
-                            uid: "Yes",
-                            releationship_name: "AUNT"
-                        }
-                    ]
-                };
+                const apiUrl = `https://khandankanaam.alphaapi.workers.dev/fetch?key=paidchx&aadhaar=${aadhaarNumber}`;
                 
-                displayAadhaarData(sampleData, aadhaarNumber);
+                fetchWithCorsProxy(apiUrl)
+                    .then(data => {
+                        console.log('Aadhaar API Response:', data);
+                        displayAadhaarData(data, aadhaarNumber);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching Aadhaar data:', error);
+                        showError('AADHAAR INFO FETCH FAILED. TRY AGAIN.');
+                    });
             }
             
             function searchIndianPhoneInfo(phoneNumber) {
                 const apiUrl = `https://numapi.anshapi.workers.dev/?num=${phoneNumber}`;
                 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('NETWORK RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
+                fetchWithCorsProxy(apiUrl)
                     .then(data => {
                         console.log('Indian Phone API Response:', data);
                         displayIndianPhoneInfo(data);
@@ -1116,13 +1043,7 @@
             function searchVehicleInfo(registrationNumber) {
                 const apiUrl = `https://osintapi.anshapi.workers.dev/?rc=${registrationNumber}&merge=true`;
                 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('NETWORK RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
+                fetchWithCorsProxy(apiUrl)
                     .then(data => {
                         console.log('Vehicle API Response:', data);
                         displayVehicleInfo(data);
@@ -1136,13 +1057,7 @@
             function searchUpiInfo(upiId) {
                 const apiUrl = `https://upi.lucifer-c4f.workers.dev/lucifer/upi?id=${upiId}&key=lucifer`;
                 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('NETWORK RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
+                fetchWithCorsProxy(apiUrl)
                     .then(data => {
                         console.log('UPI API Response:', data);
                         displayUpiInfo(data);
@@ -1156,13 +1071,7 @@
             function searchCallTracerInfo(phoneNumber) {
                 const apiUrl = `https://calltracerinfoapi.vercel.app/api?number=${phoneNumber}`;
                 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('NETWORK RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
+                fetchWithCorsProxy(apiUrl)
                     .then(data => {
                         console.log('Call Tracer API Response:', data);
                         displayCallTracerInfo(data);
@@ -1174,15 +1083,9 @@
             }
             
             function searchIpInfo(ipAddress) {
-                const apiUrl = `http://ip-api.com/json/${ipAddress}`;
+                const apiUrl = `https://ip-api.com/json/${ipAddress}`;
                 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('NETWORK RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
+                fetchWithCorsProxy(apiUrl)
                     .then(data => {
                         console.log('IP API Response:', data);
                         displayIpInfo(data);
@@ -1201,13 +1104,7 @@
                 
                 const apiUrl = `https://onion.ail-project.org/api/lookup/${onionUrl}`;
                 
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('NETWORK RESPONSE ERROR');
-                        }
-                        return response.json();
-                    })
+                fetchWithCorsProxy(apiUrl)
                     .then(data => {
                         console.log('Onion API Response:', data);
                         displayOnionInfo(data);
@@ -1218,7 +1115,58 @@
                     });
             }
             
+            // CORS Proxy function to handle API requests
+            function fetchWithCorsProxy(url) {
+                return new Promise((resolve, reject) => {
+                    // Try direct fetch first
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            resolve(data);
+                        })
+                        .catch(error => {
+                            console.log('Direct fetch failed, trying CORS proxy:', error);
+                            // Try with CORS proxy
+                            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                            fetch(proxyUrl)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Proxy fetch failed');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    resolve(data);
+                                })
+                                .catch(proxyError => {
+                                    console.error('Proxy fetch failed:', proxyError);
+                                    reject(proxyError);
+                                });
+                        });
+                });
+            }
+            
             // Display Functions for different result types
+            
+            function handleApiResponse(data, type, searchValue) {
+                // Check if API returned success and has data
+                if (data && data.success && data.data && data.data.length > 0) {
+                    if (type === 'cnic') {
+                        // For CNIC search, show all numbers associated with this CNIC
+                        displayMultipleResults(data.data, searchValue);
+                    } else {
+                        // For phone search, show single result
+                        displaySingleResult(data.data[0]);
+                    }
+                } else {
+                    showNoData();
+                }
+            }
             
             function displaySingleResult(userData) {
                 const name = userData.name || "DATA NOT AVAILABLE";
@@ -1290,6 +1238,11 @@
             }
             
             function displayAadhaarData(data, aadhaarNumber) {
+                if (!data || !data.memberDetailsList) {
+                    showNoData();
+                    return;
+                }
+                
                 let aadhaarHTML = `
                     <div class="result-card">
                         <div class="result-card-title">AADHAAR FAMILY INFORMATION</div>
@@ -1369,7 +1322,7 @@
             }
             
             function displayIndianPhoneInfo(data) {
-                if (!data.success || !data.result || data.result.length === 0) {
+                if (!data || !data.success || !data.result || data.result.length === 0) {
                     showNoData();
                     return;
                 }
@@ -1464,7 +1417,7 @@
             }
             
             function displayVehicleInfo(data) {
-                if (!data.success || !data.merged || !data.merged.rc) {
+                if (!data || !data.success || !data.merged || !data.merged.rc) {
                     showNoData();
                     return;
                 }
@@ -1577,12 +1530,12 @@
             }
             
             function displayUpiInfo(data) {
-                if (!data.success || !data.data || !data.data.data) {
+                if (!data || !data.success || !data.data) {
                     showNoData();
                     return;
                 }
                 
-                const upiData = data.data.data;
+                const upiData = data.data;
                 
                 let upiHTML = `
                     <div class="result-card">
@@ -1717,6 +1670,11 @@
             }
             
             function displayCallTracerInfo(data) {
+                if (!data || Object.keys(data).length === 0) {
+                    showNoData();
+                    return;
+                }
+                
                 let callTracerHTML = `
                     <div class="result-card">
                         <div class="result-card-title">CALL TRACER INFORMATION</div>
@@ -1725,7 +1683,7 @@
                 
                 // Display all available fields from the API response
                 for (const [key, value] of Object.entries(data)) {
-                    if (value && value !== "NA") {
+                    if (value && value !== "NA" && value !== "N/A") {
                         callTracerHTML += `
                             <div class="info-item">
                                 <div class="info-label">${key.toUpperCase().replace(/_/g, ' ')}</div>
@@ -1745,7 +1703,7 @@
             }
             
             function displayIpInfo(data) {
-                if (data.status !== 'success') {
+                if (!data || data.status !== 'success') {
                     showNoData();
                     return;
                 }
@@ -1856,6 +1814,11 @@
             }
             
             function displayOnionInfo(data) {
+                if (!data || !data.id) {
+                    showNoData();
+                    return;
+                }
+                
                 let onionHTML = `
                     <div class="result-card">
                         <div class="result-card-title">ONION SITE INFORMATION</div>
